@@ -10,6 +10,7 @@ const mongoose = require('mongoose')
 
 const Review = require('./models/review')
 const Campground = require('./models/campground')
+const User = require('./models/user')
 
 //package for the ejs view engine
 const ejsMate = require("ejs-mate")
@@ -22,12 +23,20 @@ const catchAsync = require('./utils/catchAsync')
 //routes from the 'routes' folder
 const campgrounds = require('./routes/campground')
 const reviews = require('./routes/reviews')
-
+const users = require('./routes/users')
 //middleware for error handling
 const ExpressError = require('./utils/ExpressError')
 //package used for session management and flash messages
 const session = require('express-session')
 const flash = require('connect-flash')
+
+const passport = require('passport')
+const LocalStrategy = require('passport-local')
+
+
+
+
+
 //connects to mongoose db
 mongoose.connect('mongodb://localhost:27017/yelp-camp',{
     useNewUrlParser: true,
@@ -65,6 +74,17 @@ const sessionConfig = {
 //enabled the session using the config created earlier
 app.use(session(sessionConfig))
 
+
+//must be bellow session
+//enable the use of auth middleware
+app.use(passport.initialize())
+//used to remember the login session 
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser())
+passport.deserializeUser(User.deserializeUser())
+
+
 //middleware used to validate the review
 const validateReview = (req, res, next)=>{
     const {error} = reviewSchema.validate(req.body);
@@ -78,6 +98,8 @@ const validateReview = (req, res, next)=>{
 //this middleware make the flash message available to any route (must be before routes var)
 // must add "<%=success%>" to the boilerplate ejs
 app.use((req, res, next)=>{
+    //saving current user state to locals
+    res.locals.currentUser = req.user;
     //this saves the flash msg to the local variable under the key 'success'
     res.locals.success = req.flash('success')
     res.locals.error = req.flash('error')
@@ -91,6 +113,7 @@ app.use((req, res, next)=>{
 //uses the routes from "routes" folder
 app.use('/campgrounds', campgrounds)
 app.use('/campgrounds/:id/reviews', reviews)
+app.use('/', users)
 //set ejsMate instead of ejs
 app.engine('ejs', ejsMate)
 //set ejs as view engine 

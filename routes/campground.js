@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync')
 const ExpressError = require('../utils/ExpressError')
 const Campground = require('../models/campground')
 const {campgroundSchema} = require('../schemas.js')
-
+const {isLoggedIn} = require('../middleware')
 
 
 
@@ -27,14 +27,16 @@ router.get('/', catchAsync(async (req, res)=>{
     res.render('campgrounds/index', {campgrounds})
 }))
 //route for creating a new campground
-router.get('/new', (req, res)=>{
-    //renders a form from which you can create  a new campground
-    res.render('campgrounds/new')
+router.get('/new',isLoggedIn, (req, res)=>{
+    
+
+        //renders a form from which you can create  a new campground
+        res.render('campgrounds/new')
 })
 //post route used by the create campground form that will use 
 //validateCampground middleware (created in the beginning) and cathAsync
 //for handling error
-router.post('/', validateCampground, catchAsync(async (req, res, next)=>{
+router.post('/',isLoggedIn, validateCampground, catchAsync(async (req, res, next)=>{
     
         //creates a new campground using campground model and data from req.body
         const campground = new Campground(req.body)
@@ -61,7 +63,7 @@ router.get('/:id', catchAsync(async (req, res)=>{
     res.render('campgrounds/show', {campground})
 }))
 //route used to edit a specific campground
-router.get('/:id/edit', catchAsync(async (req, res)=>{
+router.get('/:id/edit',isLoggedIn , catchAsync(async (req, res)=>{
     //destruct the id from req.params
     const {id} = req.params
     //finds the campground in the database
@@ -77,7 +79,7 @@ router.get('/:id/edit', catchAsync(async (req, res)=>{
 }))
 //route used by the edit form to update the campground
 //it uses middlewares to validate the input
-router.put('/:id', validateCampground, catchAsync(async (req, res)=>{
+router.put('/:id',isLoggedIn , validateCampground, catchAsync(async (req, res)=>{
     //destruct the id from req.params
     const {id} = req.params;
     //finds the campground in the database and then updates it with the req.body info
@@ -88,7 +90,7 @@ router.put('/:id', validateCampground, catchAsync(async (req, res)=>{
     res.redirect(`/campgrounds/${campground._id}`)
 }))
 //route used by the delete form
-router.delete('/:id', catchAsync(async (req, res)=>{
+router.delete('/:id',isLoggedIn , catchAsync(async (req, res)=>{
     //destruct the id from req.params
     const {id} = req.params;
     //finds the campground and then deletes it
