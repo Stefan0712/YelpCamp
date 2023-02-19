@@ -15,6 +15,8 @@ module.exports.createCampground = async (req, res, next)=>{
     
     //creates a new campground using campground model and data from req.body
     const campground = new Campground(req.body)
+    //map over the uploaded images and then add the paths and filenames to the campground
+    campground.images = req.files.map((f => ({url: f.path, filename: f.filename})))
     //set the author of the campground to the currently logged in user
     campground.author = req.user._id;
     //saves the campground to the database
