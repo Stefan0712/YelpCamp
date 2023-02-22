@@ -171,12 +171,16 @@ const validateReview = (req, res, next)=>{
 }
 //this middleware make the flash message available to any route (must be before routes var)
 // must add "<%=success%>" to the boilerplate ejs
-app.use((req, res, next) => {
+app.use((req, res, next)=>{
+    //saving current user state to locals
     res.locals.currentUser = req.user;
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    next();
+    //this saves the flash msg to the local variable under the key 'success'
+    res.locals.success = req.flash('success')
+    res.locals.error = req.flash('error')
+    next()
 })
+
+
 
 
 

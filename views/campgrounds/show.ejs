@@ -3,7 +3,7 @@
 
 
 <div class="row mb-5">
-    <div class="col-6">
+    <div class="col-6 show-container">
       <div id="map" class="mb-3"></div>
         <div class="card">
             <div id="campgroundCarousel" class="carousel slide" data-bs-ride="carousel">
@@ -38,9 +38,9 @@
             <% if(currentUser && campground.author.equals(currentUser._id)){ %>
 
               <div class="card-body">
-                <a href="/campgrounds/<%=campground._id%>/edit" class="btn btn-info card-link">Edit</a>
+                <a href="/campgrounds/<%=campground._id%>/edit" class="btn btn-info show-container-btns">Edit</a>
                 <form class="d-inline" action="/campgrounds/<%=campground._id%>?_method=DELETE" method="POST">
-                  <button class="btn btn-danger">Delete</button></form>
+                  <button class="btn btn-danger show-container-btns">Delete</button></form>
               </div>
               <div class="card-footer text-muted">2 days ago</div>
               <%  } %>
@@ -48,7 +48,7 @@
         </div>    
         
       </div>
-      <div class="col-6">
+      <div class="col-6 review-container">
         <% if(currentUser){ %>
         <h2>Leave a Review</h2>
       <form  class="mb-3 validated-form" action="/campgrounds/<%=campground._id%>/reviews" method="POST" novalidate>
@@ -67,12 +67,12 @@
             <label for="first-rate5" title="Amazing">5 stars</label>
           </fieldset>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 ">
           <label class="form-label" for="body">Review</label>
           <textarea class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
           <div class="valid-feedback">Looks good!</div>
         </div>
-        <button class="btn btn-success">Add review</button>
+        <button class="btn btn-success add-review-btn" >Add review</button>
       </form>
       <%}%>
       <% for(let review of campground.reviews){ %>
