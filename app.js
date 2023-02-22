@@ -125,7 +125,9 @@ app.set('views', path.join(__dirname,'views'))
 
 //route for index page
 app.get('/',(req, res)=>{
-    res.render("home")
+    req.flash("success","Home page not set up yet. Redirected to All Campgrounds")
+    res.redirect('/campgrounds')
+    
 })
 
 
