@@ -10,6 +10,7 @@ const path = require('path')
 const {campgroundSchema} = require('./schemas.js')
 const {reviewSchema} = require('./schemas.js')
 
+
 //mongoose 
 const mongoose = require('mongoose')
 
@@ -35,13 +36,14 @@ const ExpressError = require('./utils/ExpressError')
 //package used for session management and flash messages
 const session = require('express-session')
 const flash = require('connect-flash')
+const MongoStore = require('connect-mongo'); 
 
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
-
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 //connects to mongoose db
-mongoose.connect('mongodb://localhost:27017/yelp-camp',{
+mongoose.connect(dbUrl,{
     useNewUrlParser: true,
     useUnifiedTopology: true
 });    
@@ -117,7 +119,18 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(flash())
 
 //config for session
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 60 * 60,
+    crypto:{
+        secret: 'sqiorrel'
+    }
+})
+store.on('error', function(e){
+    console.log('SESSION STORE ERROR', e)
+})
 const sessionConfig = {
+    store,
     name: 'session',
     secret: 'thisshouldbeabettersecret',
     resave: false,
