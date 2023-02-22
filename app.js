@@ -2,6 +2,7 @@
 if(process.env.NODE_ENV !== "production"){
     require('dotenv').config();
 }
+const mongoSanitize = require('express-mongo-sanitize')
 const express = require('express')
 const app = express()
 const path = require('path')
@@ -23,7 +24,8 @@ const methodOverride = require("method-override")
 
 //middleware created to handle errors
 const catchAsync = require('./utils/catchAsync')
-
+//security package
+const helmet = require('helmet')
 //routes from the 'routes' folder
 const campgrounds = require('./routes/campground')
 const reviews = require('./routes/reviews')
@@ -48,7 +50,64 @@ db.on("error", console.error.bind(console, "connection error:"))
 db.once("open", () =>{
     console.log("Database connected")
 })
+//app.use(helmet())
 
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/diiwbea7z/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/diiwbea7z/"
+];
+const connectSrcUrls = [
+    "https://*.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://events.mapbox.com",
+    "https://res.cloudinary.com/diiwbea7z/"
+];
+const fontSrcUrls = [ "https://res.cloudinary.com/diiwbea7z/" ];
+ 
+app.use(
+    helmet({
+        contentSecurityPolicy: {
+            directives : {
+                defaultSrc : [],
+                connectSrc : [ "'self'", ...connectSrcUrls ],
+                scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+                styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+                workerSrc  : [ "'self'", "blob:" ],
+                objectSrc  : [],
+                imgSrc     : [
+                    "'self'",
+                    "blob:",
+                    "data:",
+                    "https://res.cloudinary.com/diiwbea7z/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                    "https://images.unsplash.com/"
+                ],
+                fontSrc    : [ "'self'", ...fontSrcUrls ],
+                mediaSrc   : [ "https://res.cloudinary.com/diiwbea7z/" ],
+                childSrc   : [ "blob:" ]
+            }
+        },
+        crossOriginEmbedderPolicy: false
+    })
+);
+
+
+//blocks the use of mongoose injections
+app.use(mongoSanitize())
 //this is a middleware that extracts the data sent from an HTML form and adds it to the request object as a key-value pair
 app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
@@ -59,12 +118,15 @@ app.use(flash())
 
 //config for session
 const sessionConfig = {
+    name: 'session',
     secret: 'thisshouldbeabettersecret',
     resave: false,
     saveUninitialized: true,
     cookie: {
         //security thing
         httpOnly: true,
+        //uncomment the line bellow when deploying
+        //secure: true,
         //makes the cookie to expire after a week, counting form the moment of creation
         // (Date.now + 1sec * 60 sec * 60 min * 24h * 7days )
         expires: Date.now() + 1000* 60 * 60 * 24 * 7,
@@ -125,8 +187,7 @@ app.set('views', path.join(__dirname,'views'))
 
 //route for index page
 app.get('/',(req, res)=>{
-    req.flash("success","Home page not set up yet. Redirected to All Campgrounds")
-    res.redirect('/campgrounds')
+    res.render('home')
     
 })
 
