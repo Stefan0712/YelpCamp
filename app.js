@@ -38,7 +38,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
-const dbUrl = process.end.DB_URL;
+const dbUrl = process.env.DB_URL;
 //connects to mongoose db
 mongoose.connect(dbUrl,{
     useNewUrlParser: true,
