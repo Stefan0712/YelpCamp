@@ -1,7 +1,4 @@
 
-if(process.env.NODE_ENV !== "production"){
-    require('dotenv').config();
-}
 const mongoSanitize = require('express-mongo-sanitize')
 const express = require('express')
 const app = express()
@@ -133,7 +130,7 @@ console.log('The token is: ', process.env.MAPBOX_TOKEN)
 const sessionConfig = {
     store,
     name: 'session',
-    secret: 'thisshouldbeabettersecret',
+    secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
