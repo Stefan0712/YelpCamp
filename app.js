@@ -129,7 +129,7 @@ const store = MongoStore.create({
 store.on('error', function(e){
     console.log('SESSION STORE ERROR', e)
 })
-console.log(process.env.MAPBOX_TOKEN)
+console.log('The token is: ', process.env.MAPBOX_TOKEN)
 const sessionConfig = {
     store,
     name: 'session',
