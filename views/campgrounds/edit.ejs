@@ -30,14 +30,13 @@
                     <textarea class="form-control" type="text" id="description" name="description" required><%= campground.description %></textarea>
                     <div class="valid-feedback">Looks good!</div>
                 </div>
-                <div class="mb-3">
+                <h3>Delete images</h3>
+                <div class="mb-3 images">
                     <% campground.images.forEach(function(img,i){ %>
-                        <div class="container mb-3 mt-3">
+                        <div class="container img-container">
                             <img src="<%= img.thumbnail %>" alt="" class="img-thumbnail">
-                            <div class="form-check-inline">
-                                <input class="checkbox" type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%=img.filename%>">
-                            </div>
-                            <label for="image-<%=i%>">Delete?</label>
+                            <input class="checkbox" type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%=img.filename%>">
+                            
                         </div>
                         <% }) %>
                 </div>

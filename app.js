@@ -7,6 +7,9 @@ const path = require('path')
 const {campgroundSchema} = require('./schemas.js')
 const {reviewSchema} = require('./schemas.js')
 
+// if(process.env.NODE_ENV !== "production"){
+//     require('dotenv').config();
+// }
 
 //mongoose 
 const mongoose = require('mongoose')
@@ -38,7 +41,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
-const dbUrl = process.env.DB_URL;
+const dbUrl = session.env.DB_URL
 //connects to mongoose db
 mongoose.connect(dbUrl,{
     useNewUrlParser: true,
@@ -126,7 +129,6 @@ const store = MongoStore.create({
 store.on('error', function(e){
     console.log('SESSION STORE ERROR', e)
 })
-console.log('The token is: ', process.env.MAPBOX_TOKEN)
 const sessionConfig = {
     store,
     name: 'session',
