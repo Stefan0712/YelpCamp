@@ -1,4 +1,7 @@
 
+if(process.env.NODE_ENV !== "production"){
+    require('dotenv').config();
+}
 const mongoSanitize = require('express-mongo-sanitize')
 const express = require('express')
 const app = express()
@@ -38,7 +41,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 
-const dbUrl = process.env.DB_URL;
+const dbUrl = 'mongodb://localhost:27017/yelp-camp';
 //connects to mongoose db
 mongoose.connect(dbUrl,{
     useNewUrlParser: true,
@@ -112,7 +115,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 //servers the 'public' folder so we can use images, scripts and other resources
 //when added in the boilerplate or other view, we use '/fileName'
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '/public')))
 app.use(flash())
 
 //config for session
