@@ -7,9 +7,9 @@ const path = require('path')
 const {campgroundSchema} = require('./schemas.js')
 const {reviewSchema} = require('./schemas.js')
 
-// if(process.env.NODE_ENV !== "production"){
-//     require('dotenv').config();
-// }
+if(process.env.NODE_ENV !== "production"){
+    require('dotenv').config();
+}
 
 //mongoose 
 const mongoose = require('mongoose')
@@ -95,7 +95,7 @@ app.use(
                     "'self'",
                     "blob:",
                     "data:",
-                    "https://res.cloudinary.com/diiwbea7z/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                    "https://res.cloudinary.com/diiwbea7z/", //SHOULD MATCH CLOUDINARY ACCOUNT!
                     "https://images.unsplash.com/"
                 ],
                 fontSrc    : [ "'self'", ...fontSrcUrls ],
@@ -123,7 +123,7 @@ const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 60 * 60,
     crypto:{
-        secret: 'sqiorrel'
+        secret: 'squirrel'
     }
 })
 store.on('error', function(e){
